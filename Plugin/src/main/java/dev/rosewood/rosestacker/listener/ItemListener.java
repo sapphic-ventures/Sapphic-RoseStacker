@@ -205,12 +205,15 @@ public class ItemListener implements Listener {
 
         // Just let them pick it up and remove the item if it will all fit
         if (inventorySpace >= stackedItem.getStackSize() && stackedItem.getStackSize() <= maxStackSize) {
+            // Temporarily set the actual amount so vanilla pickup works correctly
+            target.setAmount(stackedItem.getStackSize());
+            stackedItem.getItem().setItemStack(target);
             this.stackManager.removeItemStack(stackedItem);
             return false;
         }
 
         boolean willPickupAll = inventorySpace >= stackedItem.getStackSize();
-        int amount = willPickupAll ? stackedItem.getStackSize() - target.getAmount() : inventorySpace;
+        int amount = willPickupAll ? stackedItem.getStackSize() : inventorySpace;
 
         this.addItemStackAmountToInventory(inventory, target, amount);
 

@@ -90,7 +90,7 @@ public class StackedItem extends Stack<ItemStackSettings> implements Comparable<
     @Override
     public void updateDisplay() {
         ItemStack itemStack = this.item.getItemStack();
-        itemStack.setAmount(Math.min(this.size, itemStack.getMaxStackSize()));
+        itemStack.setAmount(1); // Always display as a single item, regardless of stack size
 
         if (itemStack.getType() == Material.AIR)
             return;
