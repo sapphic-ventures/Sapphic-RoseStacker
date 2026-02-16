@@ -49,9 +49,11 @@ public final class RoseStackerAPI {
     private static RoseStackerAPI instance;
 
     private final RoseStacker roseStacker;
+    private ItemStackDisplayProvider itemStackDisplayProvider;
 
     private RoseStackerAPI() {
         this.roseStacker = RoseStacker.getInstance();
+        this.itemStackDisplayProvider = null;
     }
 
     /**
@@ -731,6 +733,30 @@ public final class RoseStackerAPI {
                 EntityUtils.getApproximateExperience(stackedEntity.getEntity()),
                 lootingModifier
         );
+    }
+
+    /**
+     * Sets a custom ItemStackDisplayProvider to customize how item stack names are displayed.
+     * <p>
+     * This allows you to override the default formatting behavior for stacked items on a per-item basis.
+     * The provider will be called whenever a stacked item's display name needs to be updated.
+     * <p>
+     * Set to null to remove the custom provider and revert to default behavior.
+     *
+     * @param provider The ItemStackDisplayProvider to use, or null to use default formatting
+     */
+    public void setItemStackNameProvider(@Nullable ItemStackDisplayProvider provider) {
+        this.itemStackDisplayProvider = provider;
+    }
+
+    /**
+     * Gets the currently registered ItemStackDisplayProvider.
+     *
+     * @return The current ItemStackDisplayProvider, or null if no custom formatter is set
+     */
+    @Nullable
+    public ItemStackDisplayProvider getItemStackDisplayProvider() {
+        return this.itemStackDisplayProvider;
     }
 
     //endregion

@@ -46,8 +46,8 @@ allprojects {
         maven {
             url = 'https://repo.rosewooddev.io/repository/maven-public'
             credentials {
-                username project.mavenUser
-                password project.mavenPassword
+                username project.findProperty("rosewood.mavenUser")
+                password project.findProperty("rosewood.mavenPassword")
                 authentication {
                     basic(BasicAuthentication)
                 }
@@ -93,9 +93,9 @@ publishing {
     publications {
         shadow(MavenPublication) {
             from components.shadow
-            artifactId = 'rosestacker'
+            artifactId = 'sapphic-rosestacker'
             pom {
-                name = 'rosestacker'
+                name = 'sapphic-rosestacker'
             }
         }
     }

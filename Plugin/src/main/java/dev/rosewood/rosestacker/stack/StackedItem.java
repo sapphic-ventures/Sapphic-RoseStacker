@@ -1,8 +1,11 @@
 package dev.rosewood.rosestacker.stack;
 
+import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import dev.rosewood.rosestacker.RoseStacker;
+import dev.rosewood.rosestacker.api.ItemStackDisplayProvider;
+import dev.rosewood.rosestacker.api.RoseStackerAPI;
 import dev.rosewood.rosestacker.config.SettingKey;
 import dev.rosewood.rosestacker.manager.LocaleManager;
 import dev.rosewood.rosestacker.manager.StackSettingManager;
@@ -123,8 +126,8 @@ public class StackedItem extends Stack<ItemStackSettings> implements Comparable<
                 .add("amount", StackerUtils.formatNumber(this.getStackSize()))
                 .add("name", displayName);
 
+        String timer = null;
         if (SettingKey.ITEM_DISPLAY_DESPAWN_TIMER_PLACEHOLDER.get()) {
-            String timer;
             if (NMSUtil.getVersionNumber() >= 18 && this.item.isUnlimitedLifetime()) {
                 timer = "∞";
             } else {
@@ -136,11 +139,19 @@ public class StackedItem extends Stack<ItemStackSettings> implements Comparable<
             placeholdersBuilder.add("timer", timer);
         }
 
-        String displayString;
-        if (this.getStackSize() > 1) {
-            displayString = RoseStacker.getInstance().getManager(LocaleManager.class).getLocaleMessage("item-stack-display", placeholdersBuilder.build());
-        } else {
-            displayString = RoseStacker.getInstance().getManager(LocaleManager.class).getLocaleMessage("item-stack-display-single", placeholdersBuilder.build());
+        ItemStackDisplayProvider customFormatter = RoseStackerAPI.getInstance().getItemStackDisplayProvider();
+        String displayString = null;
+        if (customFormatter != null) {
+            displayString = HexUtils.colorify(customFormatter.formatName(this, displayName, timer));
+        }
+
+        // Use default formatting if no custom formatter
+        if (displayString == null) {
+            if (this.getStackSize() > 1) {
+                displayString = RoseStacker.getInstance().getManager(LocaleManager.class).getLocaleMessage("item-stack-display", placeholdersBuilder.build());
+            } else {
+                displayString = RoseStacker.getInstance().getManager(LocaleManager.class).getLocaleMessage("item-stack-display-single", placeholdersBuilder.build());
+            }
         }
 
         displayString = displayString.replace(MAGIC_AMPERSAND, '&').replace(MAGIC_LESS_THAN, '<').replace(MAGIC_POUND, '#');
